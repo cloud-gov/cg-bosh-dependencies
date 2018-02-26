@@ -1,0 +1,186 @@
+groups:
+- name: all
+  jobs:
+  - tripwire
+  - clamav
+  - inotify-tools
+  - pdns
+  - openresty
+  - elastalert
+- name: tripwire
+  jobs:
+  - tripwire
+- name: clamav
+  jobs:
+  - clamav
+- name: awslogs
+  jobs:
+  - inotify-tools
+
+resource_types:
+- name: pypi
+  type: docker-image
+  source:
+    repository: cfplatformeng/concourse-pypi-resource
+
+- name: http
+  type: docker-image
+  source:
+    repository: aequitas/http-resource
+
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
+resources:
+- name: tripwire
+  type: github-release
+  source:
+    user: tripwire
+    repository: tripwire-open-source
+    access_token: ((github-access-token))
+    check_every: 30m
+
+- name: clamav
+  type: http
+  source:
+    index: https://www.clamav.net/downloads/
+    uri: https://www.clamav.net/downloads/production/clamav-{version}.tar.gz
+    file_name: clamav-{version}.tar.gz
+    regex: 'clamav-(0\.\d+\.\d+)\.tar\.gz'
+
+- name: inotify-tools
+  type: git
+  source:
+    uri: https://github.com/rvoicilas/inotify-tools
+    branch: master
+    tag_filter: "3.*"
+    check_every: 30m
+
+- name: openresty
+  type: github-release
+  source:
+    user: openresty
+    repository: openresty
+    access_token: ((github-access-token))
+    check_every: 30m
+
+- name: pdns
+  type: http
+  source:
+    index: https://downloads.powerdns.com/releases/
+    uri: https://downloads.powerdns.com/releases/pdns-{version}.tar.bz2
+    file_name: pdns-{version}.tar.bz2
+    regex: 'pdns-(4\.\d+\.\d+)\.tar\.bz2'
+
+- name: elastalert
+  type: pypi
+  source:
+    name: elastalert
+
+- name: notify
+  type: slack-notification
+  source:
+    url: ((slack-webhook-url))
+
+jobs:
+- name: tripwire
+  plan:
+  - aggregate:
+    - get: tripwire
+      trigger: true
+      params:
+        globs:
+        - tripwire-open-source-*.tar.gz
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New tripwire version $TEXT_FILE_CONTENT has been detected"
+      text_file: tripwire/version
+
+- name: clamav
+  plan:
+  - aggregate:
+    - get: clamav
+      trigger: true
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New clamav version $TEXT_FILE_CONTENT has been detected"
+      text_file: clamav/version
+
+- name: inotify-tools
+  plan:
+  - aggregate:
+    - get: inotify-tools
+      trigger: true
+  - task: grab-tag
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: 18fgsa/concourse-task
+      inputs:
+      - name: inotify-tools
+      outputs:
+      - name: tag
+      run:
+        path: sh
+        args:
+        - -exc
+        - echo $(cd inotify-tools && git describe --tags) > tag/tag
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New inotify-tools version $TEXT_FILE_CONTENT has been detected"
+      text_file: tag/tag
+
+- name: pdns
+  plan:
+  - aggregate:
+    - get: pdns
+      trigger: true
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New pdns version $TEXT_FILE_CONTENT has been detected"
+      text_file: pdns/version
+
+- name: openresty
+  plan:
+  - aggregate:
+    - get: openresty
+      trigger: true
+      params:
+        globs:
+        - openresty-*.tar.gz
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New openresty version $TEXT_FILE_CONTENT has been detected"
+      text_file: openresty/version
+
+- name: elastalert
+  plan:
+  - aggregate:
+    - get: elastalert
+      trigger: true
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New elastalert version $TEXT_FILE_CONTENT has been detected"
+      text_file: elastalert/version
