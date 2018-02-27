@@ -7,6 +7,7 @@ groups:
   - pdns
   - openresty
   - elastalert
+  - oauth2-proxy
 - name: tripwire
   jobs:
   - tripwire
@@ -16,6 +17,9 @@ groups:
 - name: awslogs
   jobs:
   - inotify-tools
+- name: oauth2-proxy
+  jobs:
+  - oauth2-proxy
 
 resource_types:
 - name: pypi
@@ -34,6 +38,12 @@ resource_types:
     repository: cfcommunity/slack-notification-resource
 
 resources:
+- name: deps-config
+  type: git
+  source:
+    uri: ((deps-config-git-uri))
+    branch: ((deps-config-git-branch))
+
 - name: tripwire
   type: github-release
   source:
@@ -79,6 +89,12 @@ resources:
   source:
     name: elastalert
 
+- name: oauth2-proxy
+  type: git
+  source:
+    uri: https://github.com/bitly/oauth2_proxy
+    branch: master
+
 - name: notify
   type: slack-notification
   source:
@@ -119,22 +135,11 @@ jobs:
   - aggregate:
     - get: inotify-tools
       trigger: true
+    - get: deps-config
   - task: grab-tag
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: 18fgsa/concourse-task
-      inputs:
-      - name: inotify-tools
-      outputs:
-      - name: tag
-      run:
-        path: sh
-        args:
-        - -exc
-        - echo $(cd inotify-tools && git describe --tags) > tag/tag
+    file: deps-config/ci/grab-tag.yml
+    input_mapping:
+      repo: inotify-tools
   - put: notify
     params:
       channel: ((slack-channel))
@@ -184,3 +189,21 @@ jobs:
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New elastalert version $TEXT_FILE_CONTENT has been detected"
       text_file: elastalert/version
+
+- name: oauth2-proxy
+  plan:
+  - aggregate:
+    - get: oauth2-proxy
+      trigger: true
+    - get: deps-config
+  - task: grab-tag
+    file: deps-config/ci/grab-tag.yml
+    input_mapping:
+      repo: oauth2-proxy
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New oauth2-proxy version $TEXT_FILE_CONTENT has been detected"
+      text_file: tag/tag
