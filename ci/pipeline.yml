@@ -4,7 +4,10 @@ groups:
   - tripwire
   - clamav
   - inotify-tools
+  - autoconf
   - pdns
+  - boost
+  - sqlite-autoconf
   - openresty
   - elastalert
   - oauth2-proxy
@@ -17,6 +20,15 @@ groups:
 - name: awslogs
   jobs:
   - inotify-tools
+  - autoconf
+- name: pdns
+  jobs:
+  - pdns
+  - boost
+  - sqlite-autoconf
+- name: elastalert
+  jobs:
+  - elastalert
 - name: oauth2-proxy
   jobs:
   - oauth2-proxy
@@ -68,6 +80,14 @@ resources:
     tag_filter: "3.*"
     check_every: 30m
 
+- name: autoconf
+  type: http
+  source:
+    index: https://ftp.gnu.org/gnu/autoconf/
+    uri: https://ftp.gnu.org/gnu/autoconf/autoconf-{version}.tar.gz
+    file_name: autoconf-{version}.tar.gz
+    regex: 'autoconf-(\d+\.\d+)\.tar\.gz'
+
 - name: openresty
   type: github-release
   source:
@@ -83,6 +103,22 @@ resources:
     uri: https://downloads.powerdns.com/releases/pdns-{version}.tar.bz2
     file_name: pdns-{version}.tar.bz2
     regex: 'pdns-(4\.\d+\.\d+)\.tar\.bz2'
+
+- name: boost
+  type: git
+  source:
+    uri: https://github.com/boostorg/boost
+    branch: master
+    tag_filter: "boost-1.*"
+    check_every: 30m
+
+- name: sqlite-autoconf
+  type: http
+  source:
+    index: https://www.sqlite.org/download.html
+    uri: https://www.sqlite.org/{version}.tar.gz
+    file_name: '{version}.tar.gz'
+    regex: '(\d{4}\/sqlite-autoconf-\d+)\.tar\.gz'
 
 - name: elastalert
   type: pypi
@@ -104,106 +140,277 @@ jobs:
 - name: tripwire
   plan:
   - aggregate:
+    - get: deps-config
     - get: tripwire
       trigger: true
       params:
         globs:
         - tripwire-open-source-*.tar.gz
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: tripwire
+    params:
+      OWNER: 18F
+      REPO: cg-tripwire-boshrelease
+      DEPENDENCY: tripwire
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New tripwire version $TEXT_FILE_CONTENT has been detected"
-      text_file: tripwire/version
+      text: "$BUILD_PIPELINE_NAME: New tripwire dependency issue for tripwire filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
 
 - name: clamav
   plan:
   - aggregate:
+    - get: deps-config
     - get: clamav
       trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: clamav
+    params:
+      OWNER: 18F
+      REPO: cg-clamav-boshrelease
+      DEPENDENCY: clamav
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New clamav version $TEXT_FILE_CONTENT has been detected"
-      text_file: clamav/version
+      text: "$BUILD_PIPELINE_NAME: New clamav dependency issue for clamav filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
 
 - name: inotify-tools
   plan:
   - aggregate:
+    - get: deps-config
     - get: inotify-tools
       trigger: true
-    - get: deps-config
   - task: grab-tag
     file: deps-config/ci/grab-tag.yml
     input_mapping:
       repo: inotify-tools
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: tag
+    params:
+      OWNER: 18F
+      REPO: cg-awslogs-boshrelease
+      DEPENDENCY: inotify-tools
+      VERSION_FILE: version/tag
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New inotify-tools version $TEXT_FILE_CONTENT has been detected"
-      text_file: tag/tag
+      text: "$BUILD_PIPELINE_NAME: New awslogs dependency issue for inotify-tools filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: autoconf
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: autoconf
+      trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: autoconf
+    params:
+      OWNER: 18F
+      REPO: cg-awslogs-boshrelease
+      DEPENDENCY: autoconf
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New awslogs dependency issue for autoconf filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
 
 - name: pdns
   plan:
   - aggregate:
+    - get: deps-config
     - get: pdns
       trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: pdns
+    params:
+      OWNER: 18F
+      REPO: pdns-release
+      DEPENDENCY: pdns
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New pdns version $TEXT_FILE_CONTENT has been detected"
-      text_file: pdns/version
+      text: "$BUILD_PIPELINE_NAME: New pdns dependency issue for pdns filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: boost
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: boost
+      trigger: true
+  - task: grab-tag
+    file: deps-config/ci/grab-tag.yml
+    input_mapping:
+      repo: boost
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: tag
+    params:
+      OWNER: 18F
+      REPO: pdns-release
+      DEPENDENCY: pdns
+      VERSION_FILE: version/tag
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New pdns dependency issue for boost filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: sqlite-autoconf
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: sqlite-autoconf
+      trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: sqlite-autoconf
+    params:
+      OWNER: 18F
+      REPO: pdns-release
+      DEPENDENCY: pdns
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New pdns dependency issue for sqlite-autoconf filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
 
 - name: openresty
   plan:
   - aggregate:
+    - get: deps-config
     - get: openresty
       trigger: true
       params:
         globs:
         - openresty-*.tar.gz
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: openresty
+    params:
+      OWNER: 18F
+      REPO: cg-secureproxy-boshrelease
+      DEPENDENCY: openresty
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New openresty version $TEXT_FILE_CONTENT has been detected"
-      text_file: openresty/version
+      text: "$BUILD_PIPELINE_NAME: New secureproxy dependency issue for openresty filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
 
 - name: elastalert
   plan:
   - aggregate:
+    - get: deps-config
     - get: elastalert
       trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: elastalert
+    params:
+      OWNER: 18F
+      REPO: cg-secureproxy-boshrelease
+      DEPENDENCY: openresty
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New elastalert version $TEXT_FILE_CONTENT has been detected"
-      text_file: elastalert/version
+      text: "$BUILD_PIPELINE_NAME: New elastalert dependency issue for elastalert filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
 
 - name: oauth2-proxy
   plan:
   - aggregate:
+    - get: deps-config
     - get: oauth2-proxy
       trigger: true
-    - get: deps-config
   - task: grab-tag
     file: deps-config/ci/grab-tag.yml
     input_mapping:
       repo: oauth2-proxy
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: tag
+    params:
+      OWNER: 18F
+      REPO: oauth2-proxy-boshrelease
+      DEPENDENCY: oauth2-proxy
+      VERSION_FILE: version/tag
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
   - put: notify
     params:
       channel: ((slack-channel))
       username: ((slack-username))
       icon_url: ((slack-icon-url))
-      text: "$BUILD_PIPELINE_NAME: New oauth2-proxy version $TEXT_FILE_CONTENT has been detected"
-      text_file: tag/tag
+      text: "$BUILD_PIPELINE_NAME: New oauth2-proxy dependency issue for oauth2-proxy filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
