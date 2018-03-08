@@ -1,6 +1,7 @@
 groups:
 - name: all
   jobs:
+  - build-http-resource
   - tripwire
   - clamav
   - inotify-tools
@@ -11,6 +12,9 @@ groups:
   - openresty
   - elastalert
   - oauth2-proxy
+- name: build-images
+  jobs:
+  - build-http-resource
 - name: tripwire
   jobs:
   - tripwire
@@ -42,7 +46,7 @@ resource_types:
 - name: http
   type: docker-image
   source:
-    repository: aequitas/http-resource
+    repository: 18fgsa/http-resource
 
 - name: slack-notification
   type: docker-image
@@ -55,6 +59,21 @@ resources:
   source:
     uri: ((deps-config-git-uri))
     branch: ((deps-config-git-branch))
+
+- name: http-resource-src
+  type: git
+  source:
+    uri: ((http-resource-git-uri))
+    branch: ((http-resource-git-branch))
+
+- name: http-resource-image
+  type: docker-image
+  source:
+    email: ((docker-email))
+    username: ((docker-username))
+    password: ((docker-password))
+    repository: 18fgsa/http-resource
+    tag: latest
 
 - name: tripwire
   type: github-release
@@ -137,6 +156,14 @@ resources:
     url: ((slack-webhook-url))
 
 jobs:
+- name: build-http-resource
+  plan:
+  - get: http-resource-src
+    trigger: true
+  - put: http-resource-image
+    params:
+      build: http-resource-src
+
 - name: tripwire
   plan:
   - aggregate:
