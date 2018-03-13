@@ -1,17 +1,4 @@
 groups:
-- name: all
-  jobs:
-  - build-http-resource
-  - tripwire
-  - clamav
-  - inotify-tools
-  - autoconf
-  - pdns
-  - boost
-  - sqlite-autoconf
-  - openresty
-  - elastalert
-  - oauth2-proxy
 - name: build-images
   jobs:
   - build-http-resource
@@ -25,6 +12,9 @@ groups:
   jobs:
   - inotify-tools
   - autoconf
+- name: secureproxy
+  jobs:
+  - openresty
 - name: pdns
   jobs:
   - pdns
@@ -36,12 +26,23 @@ groups:
 - name: oauth2-proxy
   jobs:
   - oauth2-proxy
+- name: terraform
+  jobs:
+  - terraform
+  - terraform-provider-aws
+  - terraform-provider-terraform
+  - terraform-provider-template
 
 resource_types:
 - name: pypi
   type: docker-image
   source:
     repository: cfplatformeng/concourse-pypi-resource
+
+- name: hashicorp-release
+  type: docker-image
+  source:
+    repository: starkandwayne/hashicorp-release-resource
 
 - name: http
   type: docker-image
@@ -149,6 +150,26 @@ resources:
   source:
     uri: https://github.com/bitly/oauth2_proxy
     branch: master
+
+- name: terraform
+  type: hashicorp-release
+  source:
+    project: terraform
+
+- name: terraform-provider-aws
+  type: hashicorp-release
+  source:
+    project: terraform-provider-aws
+
+- name: terraform-provider-terraform
+  type: hashicorp-release
+  source:
+    project: terraform-provider-terraform
+
+- name: terraform-provider-template
+  type: hashicorp-release
+  source:
+    project: terraform-provider-template
 
 - name: notify
   type: slack-notification
@@ -440,4 +461,108 @@ jobs:
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New oauth2-proxy dependency issue for oauth2-proxy filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: terraform
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: terraform
+      trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: terraform
+    params:
+      OWNER: 18F
+      REPO: cg-provision
+      DEPENDENCY: terraform
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New terraform dependency issue filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: terraform-provider-aws
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: terraform-provider-aws
+      trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: terraform-provider-aws
+    params:
+      OWNER: 18F
+      REPO: cg-provision
+      DEPENDENCY: terraform
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New terraform-provider-aws dependency issue filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: terraform-provider-terraform
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: terraform-provider-terraform
+      trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: terraform-provider-terraform
+    params:
+      OWNER: 18F
+      REPO: cg-provision
+      DEPENDENCY: terraform
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New terraform-provider-terraform dependency issue filed at $TEXT_FILE_CONTENT"
+      text_file: issue/url
+
+- name: terraform-provider-template
+  plan:
+  - aggregate:
+    - get: deps-config
+    - get: terraform-provider-template
+      trigger: true
+  - task: create-issue
+    file: deps-config/ci/create-issue.yml
+    input_mapping:
+      version: terraform-provider-template
+    params:
+      OWNER: 18F
+      REPO: cg-provision
+      DEPENDENCY: terraform
+      VERSION_FILE: version/version
+      USERNAME: ((github-username))
+      ACCESS_TOKEN: ((github-access-token))
+      TAG_USER: ((github-team))
+  - put: notify
+    params:
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+      text: "$BUILD_PIPELINE_NAME: New terraform-provider-template dependency issue filed at $TEXT_FILE_CONTENT"
       text_file: issue/url
