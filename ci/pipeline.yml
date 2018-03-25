@@ -502,7 +502,7 @@ jobs:
     params:
       OWNER: 18F
       REPO: cg-provision
-      DEPENDENCY: terraform
+      DEPENDENCY: terraform-provider-aws
       VERSION_FILE: version/version
       USERNAME: ((github-username))
       ACCESS_TOKEN: ((github-access-token))
@@ -528,7 +528,7 @@ jobs:
     params:
       OWNER: 18F
       REPO: cg-provision
-      DEPENDENCY: terraform
+      DEPENDENCY: terraform-provider-terraform
       VERSION_FILE: version/version
       USERNAME: ((github-username))
       ACCESS_TOKEN: ((github-access-token))
@@ -554,7 +554,7 @@ jobs:
     params:
       OWNER: 18F
       REPO: cg-provision
-      DEPENDENCY: terraform
+      DEPENDENCY: terraform-provider-template
       VERSION_FILE: version/version
       USERNAME: ((github-username))
       ACCESS_TOKEN: ((github-access-token))
