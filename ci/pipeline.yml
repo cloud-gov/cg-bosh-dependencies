@@ -187,7 +187,7 @@ jobs:
 
 - name: tripwire
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: tripwire
       trigger: true
@@ -216,7 +216,7 @@ jobs:
 
 - name: clamav
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: clamav
       trigger: true
@@ -242,7 +242,7 @@ jobs:
 
 - name: inotify-tools
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: inotify-tools
       trigger: true
@@ -272,7 +272,7 @@ jobs:
 
 - name: autoconf
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: autoconf
       trigger: true
@@ -298,7 +298,7 @@ jobs:
 
 - name: pdns
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: pdns
       trigger: true
@@ -324,7 +324,7 @@ jobs:
 
 - name: boost
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: boost
       trigger: true
@@ -354,7 +354,7 @@ jobs:
 
 - name: sqlite-autoconf
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: sqlite-autoconf
       trigger: true
@@ -380,7 +380,7 @@ jobs:
 
 - name: openresty
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: openresty
       trigger: true
@@ -409,7 +409,7 @@ jobs:
 
 - name: elastalert
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: elastalert
       trigger: true
@@ -435,7 +435,7 @@ jobs:
 
 - name: oauth2-proxy
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: oauth2-proxy
       trigger: true
@@ -465,7 +465,7 @@ jobs:
 
 - name: terraform
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: terraform
       trigger: true
@@ -491,7 +491,7 @@ jobs:
 
 - name: terraform-provider-aws
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: terraform-provider-aws
       trigger: true
@@ -517,7 +517,7 @@ jobs:
 
 - name: terraform-provider-terraform
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: terraform-provider-terraform
       trigger: true
@@ -543,7 +543,7 @@ jobs:
 
 - name: terraform-provider-template
   plan:
-  - aggregate:
+  - in_parallel:
     - get: deps-config
     - get: terraform-provider-template
       trigger: true
