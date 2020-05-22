@@ -2,9 +2,6 @@ groups:
 - name: build-images
   jobs:
   - build-http-resource
-- name: tripwire
-  jobs:
-  - tripwire
 - name: clamav
   jobs:
   - clamav
@@ -15,11 +12,6 @@ groups:
 - name: secureproxy
   jobs:
   - openresty
-- name: pdns
-  jobs:
-  - pdns
-  - boost
-  - sqlite-autoconf
 - name: elastalert
   jobs:
   - elastalert
@@ -76,14 +68,6 @@ resources:
     repository: 18fgsa/http-resource
     tag: latest
 
-- name: tripwire
-  type: github-release
-  source:
-    user: tripwire
-    repository: tripwire-open-source
-    access_token: ((github-access-token))
-    check_every: 30m
-
 - name: clamav
   type: http
   source:
@@ -115,30 +99,6 @@ resources:
     repository: openresty
     access_token: ((github-access-token))
     check_every: 30m
-
-- name: pdns
-  type: http
-  source:
-    index: https://downloads.powerdns.com/releases/
-    uri: https://downloads.powerdns.com/releases/pdns-{version}.tar.bz2
-    file_name: pdns-{version}.tar.bz2
-    regex: 'pdns-(4\.\d+\.\d+)\.tar\.bz2'
-
-- name: boost
-  type: git
-  source:
-    uri: https://github.com/boostorg/boost
-    branch: master
-    tag_filter: "boost-1.*"
-    check_every: 30m
-
-- name: sqlite-autoconf
-  type: http
-  source:
-    index: https://www.sqlite.org/download.html
-    uri: https://www.sqlite.org/{version}.tar.gz
-    file_name: '{version}.tar.gz'
-    regex: '(\d{4}\/sqlite-autoconf-\d+)\.tar\.gz'
 
 - name: elastalert
   type: pypi
