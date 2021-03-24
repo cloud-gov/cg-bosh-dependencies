@@ -156,7 +156,7 @@ jobs:
     input_mapping:
       version: clamav
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-clamav-boshrelease
       DEPENDENCY: clamav
       VERSION_FILE: version/version
@@ -186,7 +186,7 @@ jobs:
     input_mapping:
       version: tag
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-awslogs-boshrelease
       DEPENDENCY: inotify-tools
       VERSION_FILE: version/tag
@@ -212,7 +212,7 @@ jobs:
     input_mapping:
       version: autoconf
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-awslogs-boshrelease
       DEPENDENCY: autoconf
       VERSION_FILE: version/version
@@ -242,7 +242,7 @@ jobs:
     input_mapping:
       version: openresty
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-secureproxy-boshrelease
       DEPENDENCY: openresty
       VERSION_FILE: version/version
@@ -268,7 +268,7 @@ jobs:
     input_mapping:
       version: elastalert
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-secureproxy-boshrelease
       DEPENDENCY: openresty
       VERSION_FILE: version/version
@@ -298,7 +298,7 @@ jobs:
     input_mapping:
       version: tag
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: oauth2-proxy-boshrelease
       DEPENDENCY: oauth2-proxy
       VERSION_FILE: version/tag
@@ -324,7 +324,7 @@ jobs:
     input_mapping:
       version: terraform
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-provision
       DEPENDENCY: terraform
       VERSION_FILE: version/version
@@ -350,7 +350,7 @@ jobs:
     input_mapping:
       version: terraform-provider-aws
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-provision
       DEPENDENCY: terraform-provider-aws
       VERSION_FILE: version/version
@@ -376,7 +376,7 @@ jobs:
     input_mapping:
       version: terraform-provider-terraform
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-provision
       DEPENDENCY: terraform-provider-terraform
       VERSION_FILE: version/version
@@ -402,7 +402,7 @@ jobs:
     input_mapping:
       version: terraform-provider-template
     params:
-      OWNER: 18F
+      OWNER: cloud-gov
       REPO: cg-provision
       DEPENDENCY: terraform-provider-template
       VERSION_FILE: version/version
