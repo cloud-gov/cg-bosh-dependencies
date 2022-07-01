@@ -52,12 +52,14 @@ resources:
   source:
     uri: ((deps-config-git-uri))
     branch: ((deps-config-git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: http-resource-src
   type: git
   source:
     uri: ((http-resource-git-uri))
     branch: ((http-resource-git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: http-resource-image
   type: docker-image
