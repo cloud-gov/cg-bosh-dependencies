@@ -52,12 +52,14 @@ resources:
   source:
     uri: ((deps-config-git-uri))
     branch: ((deps-config-git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: http-resource-src
   type: git
   source:
     uri: ((http-resource-git-uri))
     branch: ((http-resource-git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: http-resource-image
   type: docker-image
@@ -165,7 +167,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New clamav dependency issue for clamav filed at $TEXT_FILE_CONTENT"
@@ -195,7 +197,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New awslogs dependency issue for inotify-tools filed at $TEXT_FILE_CONTENT"
@@ -221,7 +223,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New awslogs dependency issue for autoconf filed at $TEXT_FILE_CONTENT"
@@ -251,7 +253,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New secureproxy dependency issue for openresty filed at $TEXT_FILE_CONTENT"
@@ -277,7 +279,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New elastalert dependency issue for elastalert filed at $TEXT_FILE_CONTENT"
@@ -307,7 +309,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New oauth2-proxy dependency issue for oauth2-proxy filed at $TEXT_FILE_CONTENT"
@@ -333,7 +335,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New terraform dependency issue filed at $TEXT_FILE_CONTENT"
@@ -359,7 +361,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New terraform-provider-aws dependency issue filed at $TEXT_FILE_CONTENT"
@@ -385,7 +387,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New terraform-provider-terraform dependency issue filed at $TEXT_FILE_CONTENT"
@@ -411,7 +413,7 @@ jobs:
       TAG_USER: ((github-team))
   - put: notify
     params:
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
       text: "$BUILD_PIPELINE_NAME: New terraform-provider-template dependency issue filed at $TEXT_FILE_CONTENT"
