@@ -1,25 +1,32 @@
 groups:
 - name: build-images
   jobs:
+  - set-self
   - build-http-resource
 - name: clamav
   jobs:
+  - set-self
   - clamav
 - name: awslogs
   jobs:
+  - set-self
   - inotify-tools
   - autoconf
 - name: secureproxy
   jobs:
+  - set-self
   - openresty
 - name: elastalert
   jobs:
+  - set-self
   - elastalert
 - name: oauth2-proxy
   jobs:
+  - set-self
   - oauth2-proxy
 - name: terraform
   jobs:
+  - set-self
   - terraform
   - terraform-provider-aws
   - terraform-provider-terraform
@@ -139,6 +146,15 @@ resources:
     url: ((slack-webhook-url))
 
 jobs:
+- name: set-self
+  plan:
+  - get: deps-config
+    trigger: true
+  - set_pipeline: self
+    file: deps-config/ci/pipeline.yml
+    var_files:
+      - deps-config/ci/config.yml
+
 - name: build-http-resource
   plan:
   - get: http-resource-src
@@ -151,6 +167,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: clamav
       trigger: true
   - task: create-issue
@@ -177,6 +194,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: inotify-tools
       trigger: true
   - task: grab-tag
@@ -207,6 +225,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: autoconf
       trigger: true
   - task: create-issue
@@ -234,6 +253,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: openresty
       trigger: true
       params:
@@ -263,6 +283,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: elastalert
       trigger: true
   - task: create-issue
@@ -289,6 +310,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: oauth2-proxy
       trigger: true
   - task: grab-tag
@@ -319,6 +341,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: terraform
       trigger: true
   - task: create-issue
@@ -345,6 +368,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: terraform-provider-aws
       trigger: true
   - task: create-issue
@@ -371,6 +395,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: terraform-provider-terraform
       trigger: true
   - task: create-issue
@@ -397,6 +422,7 @@ jobs:
   plan:
   - in_parallel:
     - get: deps-config
+      passed: [set-self]
     - get: terraform-provider-template
       trigger: true
   - task: create-issue
