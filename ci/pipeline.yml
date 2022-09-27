@@ -80,8 +80,8 @@ resources:
 - name: clamav
   type: http
   source:
-    index: https://www.clamav.net/downloads/
-    uri: https://www.clamav.net/downloads/production/clamav-{version}.tar.gz
+    index: https://github.com/Cisco-Talos/clamav/tags
+    uri: https://github.com/Cisco-Talos/clamav/archive/refs/tags/clamav-{version}.tar.gz
     file_name: clamav-{version}.tar.gz
     regex: 'clamav-(0\.\d+\.\d+)\.tar\.gz'
 
