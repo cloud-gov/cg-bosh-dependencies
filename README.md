@@ -1,6 +1,6 @@
 # cg-bosh-dependencies
 
-Notify on outdated dependencides in cloud.gov bosh releases.
+Notify on outdated dependencies in cloud.gov bosh releases.
 
 ## Contributing
 
