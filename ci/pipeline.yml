@@ -57,15 +57,15 @@ resources:
 - name: deps-config
   type: git
   source:
-    uri: ((deps-config-git-uri))
-    branch: ((deps-config-git-branch))
+    uri: https://github.com/cloud-gov/cg-bosh-dependencies
+    branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: http-resource-src
   type: git
   source:
-    uri: ((http-resource-git-uri))
-    branch: ((http-resource-git-branch))
+    uri: https://github.com/cloud-gov/concourse-http-resource
+    branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: http-resource-image
@@ -152,8 +152,6 @@ jobs:
     trigger: true
   - set_pipeline: self
     file: deps-config/ci/pipeline.yml
-    var_files:
-      - deps-config/ci/config.yml
 
 - name: build-http-resource
   plan:
