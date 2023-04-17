@@ -1,5 +1,0 @@
-deps-config-git-uri: https://github.com/cloud-gov/cg-bosh-dependencies
-deps-config-git-branch: master
-
-http-resource-git-uri: https://github.com/18F/concourse-http-resource
-http-resource-git-branch: master
