@@ -31,11 +31,6 @@ resource_types:
   source:
     repository: cfplatformeng/concourse-pypi-resource
 
-- name: hashicorp-release
-  type: docker-image
-  source:
-    repository: starkandwayne/hashicorp-release-resource
-
 - name: http
   type: docker-image
   source:
