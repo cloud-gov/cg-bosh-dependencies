@@ -1,32 +1,23 @@
 groups:
-- name: build-images
+- name: set-pipelines
   jobs:
   - set-self
-  - build-http-resource
+
 - name: clamav
   jobs:
-  - set-self
   - clamav
 - name: awslogs
   jobs:
-  - set-self
   - inotify-tools
   - autoconf
 - name: secureproxy
   jobs:
-  - set-self
   - openresty
 - name: oauth2-proxy
   jobs:
-  - set-self
   - oauth2-proxy
 
 resource_types:
-- name: http
-  type: docker-image
-  source:
-    repository: 18fgsa/http-resource
-    
 - name: registry-image
   type: registry-image
   source:
@@ -53,21 +44,6 @@ resources:
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: http-resource-src
-  type: git
-  source:
-    uri: https://github.com/cloud-gov/concourse-http-resource
-    branch: main
-    commit_verification_keys: ((cloud-gov-pgp-keys))
-
-- name: http-resource-image
-  type: docker-image
-  source:
-    email: ((docker-email))
-    username: ((docker-username))
-    password: ((docker-password))
-    repository: 18fgsa/http-resource
-    tag: latest
 
 - name: clamav
   type: http
@@ -119,14 +95,6 @@ jobs:
     trigger: true
   - set_pipeline: self
     file: deps-config/ci/pipeline.yml
-
-- name: build-http-resource
-  plan:
-  - get: http-resource-src
-    trigger: true
-  - put: http-resource-image
-    params:
-      build: http-resource-src
 
 - name: clamav
   plan:
