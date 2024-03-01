@@ -21,11 +21,6 @@ groups:
   - set-self
   - oauth2-proxy
 
-- name: http
-  type: docker-image
-  source:
-    repository: 18fgsa/http-resource
-    
 - name: registry-image
   type: registry-image
   source:
@@ -58,15 +53,6 @@ resources:
     uri: https://github.com/cloud-gov/concourse-http-resource
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
-
-- name: http-resource-image
-  type: docker-image
-  source:
-    email: ((docker-email))
-    username: ((docker-username))
-    password: ((docker-password))
-    repository: 18fgsa/http-resource
-    tag: latest
 
 - name: clamav
   type: http
