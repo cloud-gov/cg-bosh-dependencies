@@ -21,6 +21,7 @@ groups:
   - set-self
   - oauth2-proxy
 
+resource_types:
 - name: http
   type: docker-image
   source:
