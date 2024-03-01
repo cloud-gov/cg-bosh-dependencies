@@ -17,6 +17,7 @@ groups:
   jobs:
   - oauth2-proxy
 
+resource_types:
 - name: registry-image
   type: registry-image
   source:
