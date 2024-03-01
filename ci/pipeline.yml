@@ -25,12 +25,6 @@ groups:
   - set-self
   - oauth2-proxy
 
-resource_types:
-- name: pypi
-  type: docker-image
-  source:
-    repository: cfplatformeng/concourse-pypi-resource
-
 - name: http
   type: docker-image
   source:
@@ -109,11 +103,6 @@ resources:
     repository: openresty
     access_token: ((github-access-token))
     check_every: 30m
-
-- name: elastalert
-  type: pypi
-  source:
-    name: elastalert
 
 - name: oauth2-proxy
   type: git
