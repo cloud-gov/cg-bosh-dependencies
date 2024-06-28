@@ -36,6 +36,33 @@ resource_types:
     aws_region: us-gov-west-1
     tag: latest
 
+- name: git
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: git-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+- name: http
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: http-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+- name: github-release
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: github-release-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
 resources:
 - name: deps-config
   type: git
@@ -88,6 +115,15 @@ resources:
   source:
     url: ((slack-webhook-url))
 
+- name: general-task
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: general-task
+    aws_region: us-gov-west-1
+    tag: latest
+
 jobs:
 - name: set-self
   plan:
@@ -103,7 +139,9 @@ jobs:
       passed: [set-self]
     - get: clamav
       trigger: true
+    - get: general-task
   - task: create-issue
+    image: general-task
     file: deps-config/ci/create-issue.yml
     input_mapping:
       version: clamav
@@ -130,11 +168,14 @@ jobs:
       passed: [set-self]
     - get: inotify-tools
       trigger: true
+    - get: general-task
   - task: grab-tag
+    image: general-task
     file: deps-config/ci/grab-tag.yml
     input_mapping:
       repo: inotify-tools
   - task: create-issue
+    image: general-task
     file: deps-config/ci/create-issue.yml
     input_mapping:
       version: tag
@@ -161,7 +202,9 @@ jobs:
       passed: [set-self]
     - get: autoconf
       trigger: true
+    - get: general-task
   - task: create-issue
+    image: general-task
     file: deps-config/ci/create-issue.yml
     input_mapping:
       version: autoconf
@@ -192,7 +235,9 @@ jobs:
       params:
         globs:
         - openresty-*.tar.gz
+    - get: general-task
   - task: create-issue
+    image: general-task
     file: deps-config/ci/create-issue.yml
     input_mapping:
       version: openresty
@@ -219,11 +264,14 @@ jobs:
       passed: [set-self]
     - get: oauth2-proxy
       trigger: true
+    - get: general-task
   - task: grab-tag
+    image: general-task
     file: deps-config/ci/grab-tag.yml
     input_mapping:
       repo: oauth2-proxy
   - task: create-issue
+    image: general-task
     file: deps-config/ci/create-issue.yml
     input_mapping:
       version: tag
